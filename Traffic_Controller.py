@@ -7,7 +7,7 @@ from Map_traffic import CAV
 def controller():
     #initialize CAV, PID values, and another parameters
     CAV1 = CAV("limo813")
-    CAV1.generate_map('t')
+    CAV1.generate_map('o')
 
     eprev_lateral_1= 0
     eint_lateral_1 = 0
@@ -42,14 +42,17 @@ def controller():
             CAV1.kp, CAV1.ki, CAV1.kd = CAV1.curve_PIDs[next]
             e = (((CAV1.position_x - CAV1.circles[next][0])**2 + (CAV1.position_z - CAV1.circles[next][1])**2)**0.5 - CAV1.circles[next][2])
             print("turning, error:", e)
+            print(f"debug info: {CAV1.circles[next]}")
 
         #when the cav is on a straight path
         else:
             within_critical_range = False
             current_line = CAV1.lines[current]
             CAV1.kp, CAV1.ki, CAV1.kd = CAV1.PIDs[current]
+            # e = (current_line[0]*CAV1.position_x + current_line[1]*CAV1.position_z + current_line[2])/((current_line[0]**2 + current_line[1]**2)**0.5)
             e = (current_line[0]*CAV1.position_x + current_line[1]*CAV1.position_z + current_line[2])/((current_line[0]**2 + current_line[1]**2)**0.5)
             print("straight path, error:", e)
+            print(f"debug info: {current_line}")
 
         #once out of the turning point, follow the next line
         if not line_changed and not within_critical_range:
@@ -69,6 +72,28 @@ def controller():
             eint_lateral_1 = 0
             e = (current_line[0]*CAV1.position_x + current_line[1]*CAV1.position_z + current_line[2])/((current_line[0]**2 + current_line[1]**2)**0.5)
 
+        if abs(CAV1.position_x - CAV1.pt['g'][0]) < CAV1.act_range['g'][0] and \
+            abs(CAV1.position_z - CAV1.pt['g'][1]) < CAV1.act_range['g'][1] and \
+            CAV1.lines[current] == CAV1.path['B'] and \
+            not CAV1.green_NS:
+            v_ref_CAV1 = 0
+        elif abs(CAV1.position_x - CAV1.pt['j'][0]) < CAV1.act_range['j'][0] and \
+            abs(CAV1.position_z - CAV1.pt['j'][1]) < CAV1.act_range['j'][1] and \
+            CAV1.lines[current] == CAV1.path['C'] and \
+            not CAV1.green_NS:
+            v_ref_CAV1 = 0
+        elif abs(CAV1.position_x - CAV1.pt['k'][0]) < CAV1.act_range['k'][0] and \
+            abs(CAV1.position_z - CAV1.pt['k'][1]) < CAV1.act_range['k'][1] and \
+            CAV1.lines[current] == CAV1.path['G'] and \
+            not CAV1.green_NS:
+            v_ref_CAV1 = 0
+        elif abs(CAV1.position_x - CAV1.pt['f'][0]) < CAV1.act_range['f'][0] and \
+            abs(CAV1.position_z - CAV1.pt['f'][1]) < CAV1.act_range['f'][1] and \
+            CAV1.lines[current] == CAV1.path['F'] and \
+            not CAV1.green_NS:
+            v_ref_CAV1 = 0
+        else:
+            v_ref_CAV1 = 0.6
         
 
 
@@ -77,7 +102,7 @@ def controller():
         # print(drive_msg_CAV1)
         CAV1.pub.publish(drive_msg_CAV1)
 
-        print(f"CAV location: x: {CAV1.position_x}, z: {CAV1.position_z}")
+        print(f"CAV location: x: {CAV1.position_x}, z: {CAV1.position_z}\n")
         time.sleep(dt)
 
 def calc_distance(pt_1, pt_2):
