@@ -7,7 +7,7 @@ from Map import CAV
 def controller():
     #initialize CAV, PID values, and another parameters
     CAV1 = CAV("limo813")
-    CAV1.generate_map('t')
+    CAV1.generate_map('e')
 
     eprev_lateral_1= 0
     eint_lateral_1 = 0

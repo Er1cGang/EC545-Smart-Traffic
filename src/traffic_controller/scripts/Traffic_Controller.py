@@ -2,7 +2,7 @@
 import time
 import rospy
 from ackermann_msgs.msg import AckermannDrive
-from Map import CAV
+from Map_traffic import CAV
 
 def controller():
     #initialize CAV, PID values, and another parameters
@@ -14,7 +14,7 @@ def controller():
     e = 0
     transmissionRate = 10
     dt = 1/transmissionRate # or 0.1
-    v_ref_CAV1 = 0.6# set between 0.5 and 0.6
+    v_ref_CAV1 = 0.6 # set between 0.5 and 0.6
     within_critical_range = False
     line_changed = True
 
@@ -27,6 +27,7 @@ def controller():
 
     while True:
         #if the cav is near a critical point (which are turning corners), set path to a circle, change starting point and PID values to fit
+
         if abs(CAV1.position_x  - current_end_pt[0])  < CAV1.ranges[next][0] and \
            abs(CAV1.position_z - current_end_pt[1]) < CAV1.ranges[next][1]:
             if (next == len(CAV1.turning_pts) -1 and CAV1.loop == False): #if the cav is non-looping, and is at the end of its path, stop
@@ -68,6 +69,7 @@ def controller():
             eint_lateral_1 = 0
             e = (current_line[0]*CAV1.position_x + current_line[1]*CAV1.position_z + current_line[2])/((current_line[0]**2 + current_line[1]**2)**0.5)
 
+        
 
 
         #calculate steering and publisher to the listener node on the limo
