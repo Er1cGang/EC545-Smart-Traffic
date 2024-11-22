@@ -40,7 +40,7 @@ class CAV():
 
     def traf_callback(self, msg):
         self.green_NS = msg.green_NS
-        self.green_EW = msg.green_ES
+        self.green_EW = msg.green_EW
 
 
     def generate_map(self, enter=0, exit=0):
@@ -106,22 +106,22 @@ class CAV():
 
         #the ranges near each corner that activates the circle path for the limo to follow
         self.act_range = {}
-        self.act_range['a'] = (self.lane_width*1.3, self.lane_width/1.5)   # entering x
-        self.act_range['b'] = (self.lane_width/1.5, self.lane_width*1.3)   # entering z
-        self.act_range['c'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['d'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['e'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['f'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['g'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['h'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['i'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['j'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['k'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['l'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['m'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['n'] = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range['o'] = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range['p'] = (self.lane_width*1.3, self.lane_width/1.5)
+        self.act_range['a'] = (self.lane_width*1.3, self.lane_width/1.3)   # entering x
+        self.act_range['b'] = (self.lane_width/1.3, self.lane_width*1.3)   # entering z
+        self.act_range['c'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['d'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['e'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['f'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['g'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['h'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['i'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['j'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['k'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['l'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['m'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['n'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['o'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['p'] = (self.lane_width*1.3, self.lane_width/1.3)
 
 
         #values of each line, each element is a tuple (kp, ki, kd)

@@ -6,7 +6,7 @@ from Map_traffic import CAV
 
 def controller():
     #initialize CAV, PID values, and another parameters
-    CAV1 = CAV("limo813")
+    CAV1 = CAV("limo780")
     CAV1.generate_map('o')
 
     eprev_lateral_1= 0
@@ -77,23 +77,28 @@ def controller():
             CAV1.lines[current] == CAV1.path['B'] and \
             not CAV1.green_NS:
             v_ref_CAV1 = 0
+
         elif abs(CAV1.position_x - CAV1.pt['j'][0]) < CAV1.act_range['j'][0] and \
             abs(CAV1.position_z - CAV1.pt['j'][1]) < CAV1.act_range['j'][1] and \
             CAV1.lines[current] == CAV1.path['C'] and \
             not CAV1.green_NS:
             v_ref_CAV1 = 0
+
         elif abs(CAV1.position_x - CAV1.pt['k'][0]) < CAV1.act_range['k'][0] and \
             abs(CAV1.position_z - CAV1.pt['k'][1]) < CAV1.act_range['k'][1] and \
             CAV1.lines[current] == CAV1.path['G'] and \
             not CAV1.green_EW:
             v_ref_CAV1 = 0
+
         elif abs(CAV1.position_x - CAV1.pt['f'][0]) < CAV1.act_range['f'][0] and \
             abs(CAV1.position_z - CAV1.pt['f'][1]) < CAV1.act_range['f'][1] and \
             CAV1.lines[current] == CAV1.path['F'] and \
             not CAV1.green_EW:
             v_ref_CAV1 = 0
+
         else:
             v_ref_CAV1 = 0.6
+        print(f"debug: NS:{CAV1.green_NS}, EW:{CAV1.green_EW}")
         
 
 

@@ -22,6 +22,7 @@ def main():
         message.green_NS = green_NS
         message.green_EW = green_EW
         pub.publish(message)
+        print(f"Current Status: green_NS: {green_NS}, green_EW: {green_EW}")
         time.sleep(0.1)
 
 if __name__ == '__main__':
