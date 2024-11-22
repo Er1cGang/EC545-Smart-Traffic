@@ -126,14 +126,14 @@ class CAV():
 
         #values of each line, each element is a tuple (kp, ki, kd)
         self.path_PID = {}
-        self.path_PID['A'] = (0.0005, 0.007, 0.001)
-        self.path_PID['B'] = (-0.0005, -0.007, -0.001)
-        self.path_PID['C'] = (0.0005, 0.007, 0.001)
-        self.path_PID['D'] = (-0.0005, -0.007, -0.001)
-        self.path_PID['E'] = (0.0005, 0.007, 0.001)
-        self.path_PID['F'] = (-0.0005, -0.007, -0.001)
-        self.path_PID['G'] = (0.0005, 0.007, 0.001)
-        self.path_PID['H'] = (-0.0005, -0.007, -0.001)
+        self.path_PID['A'] = (0.0006, 0.007, 0.001)
+        self.path_PID['B'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['C'] = (0.0006, 0.007, 0.001)
+        self.path_PID['D'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['E'] = (0.0006, 0.007, 0.001)
+        self.path_PID['F'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['G'] = (0.0006, 0.007, 0.001)
+        self.path_PID['H'] = (-0.0006, -0.007, -0.001)
 
         #PID values of each circle, each element is a tuple (kp, ki, kd)
         self.circle_PID = {}

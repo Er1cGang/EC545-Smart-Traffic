@@ -17,7 +17,7 @@ class listener:
 
     def listener(self):
         rospy.init_node("vs_listener", anonymous=True)
-        rospy.Subscriber("/vel_steer_limo780", AckermannDrive, self.callback)
+        rospy.Subscriber("vel_steer_limo813", AckermannDrive, self.callback)
 
 class limo_controller:
     def __init__(self):
@@ -41,30 +41,17 @@ class limo_controller:
         steering_angle = 0  # Initialize with default value
         self.listener_ins.listener()
         while True:
-            print(time.time())
             # self.listener_ins.listener()
             measures = self.lidar.getMeasures()
-            sum_dist = 0
-            count_dist = 0
             for measure in measures:
-                if measure.angle < 190 and measure.angle > 170 and measure.distance < 1500 and measure.distance > 10:
-                    sum_dist += measure.distance
-                    count_dist += 1
-                    # print(f"Angle: {measure.angle}, Distance: {measure.distance}")
-            if count_dist == 0:
-                avg_dist = 2000.0
-            else:
-                avg_dist = sum_dist/count_dist
-            print(f"avg_dist: {avg_dist}")
-            speed_factor = max(0, min(1, (avg_dist-200)/800))
-            # print(f"speed_factor: {speed_factor}")
+                print(f"Angle: {measure.angle}, Distance: {measure.distance}")
 
-            
+            print(time.time())
             if self.listener_ins.data is not None:
                 # Set motion commands from ROS topic
-                linear_vel = self.listener_ins.data.speed * speed_factor
+                linear_vel = self.listener_ins.data.speed
                 steering_angle = self.listener_ins.data.steering_angle
-                self.limo.SetMotionCommand(linear_vel=linear_vel, steering_angle=steering_angle)
+                # self.limo.SetMotionCommand(linear_vel=linear_vel, steering_angle=steering_angle)
 
                 print(f"Limo velocity command: {linear_vel}, Limo steering: {steering_angle}")
             else:
