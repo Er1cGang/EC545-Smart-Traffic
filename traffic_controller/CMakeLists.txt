@@ -51,7 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   ackermann_msgs/msg/AckermannDrive.msg
-  traffic_signal.msg
+  TrafficSignal.msg
 )
 
 ## Generate services in the 'srv' folder
