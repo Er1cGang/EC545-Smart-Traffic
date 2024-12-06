@@ -6,7 +6,7 @@ from Map_traffic import CAV
 
 def controller():
     #initialize CAV, PID values, and another parameters
-    CAV1 = CAV("limo813")
+    CAV1 = CAV("limo780")
     CAV1.generate_map('o')
 
     eprev_lateral_1= 0

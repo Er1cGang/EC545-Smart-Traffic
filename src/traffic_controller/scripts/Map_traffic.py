@@ -3,6 +3,7 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from ackermann_msgs.msg import AckermannDrive
+from traffic_controller.msg import TrafficSignal
 
 class CAV():
     def __init__(self, node_name):
@@ -27,7 +28,7 @@ class CAV():
         rospy.init_node("listen_pos", anonymous=True)
         self.sub = rospy.Subscriber('/vrpn_client_node/'+self.node_name+'/pose', PoseStamped, self.callback)
         self.pub = rospy.Publisher('vel_steer_'+self.node_name,AckermannDrive,queue_size=10) #topic name = CAV_Data
-        self.traf_sub = rospy.Subscriber('/traffic_signal', PoseStamped, self.traf_callback)
+        self.traf_sub = rospy.Subscriber('/traffic_signal', TrafficSignal, self.traf_callback)
         rospy.Rate(10)
         print('map initiated')
 
@@ -39,7 +40,7 @@ class CAV():
 
     def traf_callback(self, msg):
         self.green_NS = msg.green_NS
-        self.green_EW = msg.green_ES
+        self.green_EW = msg.green_EW
 
 
     def generate_map(self, enter=0, exit=0):
@@ -50,121 +51,138 @@ class CAV():
 
         self.lane_width = 450
         
-        self.pt_a = (320, -1955)
-        self.pt_b = (275, 200)
-        self.pt_c = (275, 580)
-        self.pt_d = (300, 2590)
-        self.pt_e = (-2020, -1955)
-        self.pt_f = (-2025, 270)
-        self.pt_g = (-2030, 635)
-        self.pt_h = (-2035, 2563)
-        self.pt_i = (-2400, -1917)
-        self.pt_j = (-2520, 276.1)
-        self.pt_k = (-2505, 596)
-        self.pt_l = (-2379, 2531)
-        self.pt_m = (-4704, -2000)
-        self.pt_n = (-4690, 135)
-        self.pt_o = (-4662, 525)
-        self.pt_p = (-4630, 2550)
+        self.pt = {}
+        self.pt['a'] = (320, -1955)
+        self.pt['b'] = (275, 200)
+        self.pt['c'] = (275, 620)
+        self.pt['d'] = (300, 2590)
+        self.pt['e'] = (-2020, -1955)
+        self.pt['f'] = (-2025, 270)
+        self.pt['g'] = (-2030, 635)
+        self.pt['h'] = (-2035, 2563)
+        self.pt['i'] = (-2400, -1917)
+        self.pt['j'] = (-2520, 276.1)
+        self.pt['k'] = (-2505, 596)
+        self.pt['l'] = (-2379, 2531)
+        self.pt['m'] = (-4704, -1900)
+        self.pt['n'] = (-4690, 135)
+        self.pt['o'] = (-4662, 525)
+        self.pt['p'] = (-4630, 2550)
 
 
         #equations for each line, in the A B C form, each variable is a tuple (A, B, C)
-        self.path_A = self.generate_line(self.pt_a, self.pt_d)
-        self.path_B = self.generate_line(self.pt_e, self.pt_h)
-        self.path_C = self.generate_line(self.pt_i, self.pt_l)
-        self.path_D = self.generate_line(self.pt_m, self.pt_p)
-        self.path_E = self.generate_line(self.pt_m, self.pt_a)
-        self.path_F = self.generate_line(self.pt_n, self.pt_b)
-        self.path_G = self.generate_line(self.pt_o, self.pt_p)
-        self.path_H = self.generate_line(self.pt_p, self.pt_d)
+        self.path = {}
+        self.path['A'] = self.generate_line(self.pt['a'], self.pt['d'])
+        self.path['B'] = self.generate_line(self.pt['e'], self.pt['h'])
+        self.path['C'] = self.generate_line(self.pt['i'], self.pt['l'])
+        self.path['D'] = self.generate_line(self.pt['m'], self.pt['p'])
+        self.path['E'] = self.generate_line(self.pt['m'], self.pt['a'])
+        self.path['F'] = self.generate_line(self.pt['n'], self.pt['b'])
+        self.path['G'] = self.generate_line(self.pt['o'], self.pt['c'])
+        self.path['H'] = self.generate_line(self.pt['p'], self.pt['d'])
 
 
 
         #data points that characterize each circle for the corners - center x, center y, radius. Each variable is a tuple (A, B, C)
-        self.circle_a = (self.pt_a[0]-self.lane_width, self.pt_a[0]+self.lane_width, self.lane_width/2)
-        self.circle_b = (self.pt_b[0]-self.lane_width, self.pt_b[0]-self.lane_width, self.lane_width/2)
-        self.circle_c = (self.pt_c[0]-self.lane_width, self.pt_c[0]+self.lane_width, self.lane_width/2)
-        self.circle_d = (self.pt_d[0]-self.lane_width, self.pt_d[0]-self.lane_width, self.lane_width/2)
-        self.circle_e = (self.pt_e[0]+self.lane_width, self.pt_e[0]+self.lane_width, self.lane_width/2)
-        self.circle_f = (self.pt_f[0]-self.lane_width, self.pt_f[0]-self.lane_width, self.lane_width/2)
-        self.circle_g = (self.pt_g[0]+self.lane_width, self.pt_g[0]+self.lane_width, self.lane_width/2)
-        self.circle_h = (self.pt_h[0]-self.lane_width, self.pt_h[0]+self.lane_width, self.lane_width/2)
+        self.circle = {}
+        self.circle['a'] = (self.pt['a'][0]-self.lane_width, self.pt['a'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['b'] = (self.pt['b'][0]-self.lane_width, self.pt['b'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['c'] = (self.pt['c'][0]-self.lane_width, self.pt['c'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['d'] = (self.pt['d'][0]-self.lane_width, self.pt['d'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['e'] = (self.pt['e'][0]+self.lane_width, self.pt['e'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['f'] = (self.pt['f'][0]-self.lane_width, self.pt['f'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['g'] = (self.pt['g'][0]+self.lane_width, self.pt['g'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['h'] = (self.pt['h'][0]-self.lane_width, self.pt['h'][1]+self.lane_width, self.lane_width/1.5)
 
-        self.circle_i = (self.pt_i[0]-self.lane_width, self.pt_i[0]+self.lane_width, self.lane_width/2)
-        self.circle_j = (self.pt_j[0]-self.lane_width, self.pt_j[0]-self.lane_width, self.lane_width/2)
-        self.circle_k = (self.pt_k[0]-self.lane_width, self.pt_k[0]+self.lane_width, self.lane_width/2)
-        self.circle_l = (self.pt_l[0]-self.lane_width, self.pt_l[0]-self.lane_width, self.lane_width/2)
-        self.circle_m = (self.pt_m[0]+self.lane_width, self.pt_m[0]+self.lane_width, self.lane_width/2)
-        self.circle_n = (self.pt_n[0]-self.lane_width, self.pt_n[0]-self.lane_width, self.lane_width/2)
-        self.circle_o = (self.pt_o[0]+self.lane_width, self.pt_o[0]+self.lane_width, self.lane_width/2)
-        self.circle_p = (self.pt_p[0]-self.lane_width, self.pt_p[0]+self.lane_width, self.lane_width/2)
+        self.circle['i'] = (self.pt['i'][0]-self.lane_width, self.pt['i'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['j'] = (self.pt['j'][0]-self.lane_width, self.pt['j'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['k'] = (self.pt['k'][0]-self.lane_width, self.pt['k'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['l'] = (self.pt['l'][0]-self.lane_width, self.pt['l'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['m'] = (self.pt['m'][0]+self.lane_width, self.pt['m'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['n'] = (self.pt['n'][0]-self.lane_width, self.pt['n'][1]-self.lane_width, self.lane_width/1.5)
+        self.circle['o'] = (self.pt['o'][0]+self.lane_width, self.pt['o'][1]+self.lane_width, self.lane_width/1.5)
+        self.circle['p'] = (self.pt['p'][0]-self.lane_width, self.pt['p'][1]+self.lane_width, self.lane_width/1.5)
 
 
         #the ranges near each corner that activates the circle path for the limo to follow
-        
-
-        self.act_range_a = (self.lane_width*1.3, self.lane_width/1.5)   # entering x
-        self.act_range_b = (self.lane_width/1.5, self.lane_width*1.3)   # entering z
-        self.act_range_c = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_d = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_e = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_f = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_g = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_h = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_i = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_j = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_k = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_l = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_m = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_n = (self.lane_width*1.3, self.lane_width/1.5)
-        self.act_range_o = (self.lane_width/1.5, self.lane_width*1.3)
-        self.act_range_p = (self.lane_width*1.3, self.lane_width/1.5)
+        self.act_range = {}
+        self.act_range['a'] = (self.lane_width*1.3, self.lane_width/1.3)   # entering x
+        self.act_range['b'] = (self.lane_width/1.3, self.lane_width*1.3)   # entering z
+        self.act_range['c'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['d'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['e'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['f'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['g'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['h'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['i'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['j'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['k'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['l'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['m'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['n'] = (self.lane_width*1.3, self.lane_width/1.3)
+        self.act_range['o'] = (self.lane_width/1.3, self.lane_width*1.3)
+        self.act_range['p'] = (self.lane_width*1.3, self.lane_width/1.3)
 
 
         #values of each line, each element is a tuple (kp, ki, kd)
-
-        self.path_A_PID = (0.0005, 0.007, 0.001)
-        self.path_B_PID = (-0.0005, -0.007, -0.001)
-        self.path_C_PID = (0.0005, 0.007, 0.001)
-        self.path_A_PID = (-0.0005, -0.007, -0.001)
-        self.path_E_PID = (0.0005, 0.007, 0.001)
-        self.path_F_PID = (-0.0005, -0.007, -0.001)
-        self.path_G_PID = (0.0005, 0.007, 0.001)
-        self.path_H_PID = (-0.0005, -0.007, -0.001)
+        self.path_PID = {}
+        self.path_PID['A'] = (0.0006, 0.007, 0.001)
+        self.path_PID['B'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['C'] = (0.0006, 0.007, 0.001)
+        self.path_PID['D'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['E'] = (0.0006, 0.007, 0.001)
+        self.path_PID['F'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['G'] = (0.0006, 0.007, 0.001)
+        self.path_PID['H'] = (-0.0006, -0.007, -0.001)
 
         #PID values of each circle, each element is a tuple (kp, ki, kd)
-        self.circle_a_PID = (-0.45, -0.00045, -0.035)
-        self.circle_b_PID = (-0.45, -0.00045, -0.035)
-        self.circle_c_PID = (-0.45, -0.00045, -0.035)
-        self.circle_d_PID = (-0.45, -0.00045, -0.035)
-        self.circle_e_PID = (-0.45, -0.00045, -0.035)
-        self.circle_f_PID = (-0.45, -0.00045, -0.035)
-        self.circle_g_PID = (-0.45, -0.00045, -0.035)
-        self.circle_h_PID = (-0.45, -0.00045, -0.035)
-        self.circle_i_PID = (-0.45, -0.00045, -0.035)
-        self.circle_j_PID = (-0.45, -0.00045, -0.035)
-        self.circle_k_PID = (-0.45, -0.00045, -0.035)
-        self.circle_l_PID = (-0.45, -0.00045, -0.035)
-        self.circle_m_PID = (-0.45, -0.00045, -0.035)
-        self.circle_n_PID = (-0.45, -0.00045, -0.035)
-        self.circle_o_PID = (-0.45, -0.00045, -0.035)
-        self.circle_p_PID = (-0.45, -0.00045, -0.035)
+        self.circle_PID = {}
+        self.circle_PID['a'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['b'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['c'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['d'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['e'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['f'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['g'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['h'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['i'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['j'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['k'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['l'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['m'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['n'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['o'] = (-0.45, -0.00045, -0.035)
+        self.circle_PID['p'] = (-0.45, -0.00045, -0.035)
         
 
 
+
         if enter == 'o' and exit == 0 : #if the limo runs along the main path
-            #array to store all points at which the limo needs to turn, in order of traversal
-            self.turning_pts = [self.pt_o, self.pt_c, self.pt_d, self.pt_h, self.pt_e, self.pt_a, self.pt_b, self.pt_n, self.pt_m, self.pt_i, self.pt_l, self.pt_p]
-            #array to store all lines, in order of traversal
-            self.lines = [self.path_G, self.path_A, self.path_H, self.path_B, self.path_E, self.path_A, self.path_F, self.path_D, self.path_E, self.path_C, self.path_H, self.path_D]
-            #the activation range of the corners, in order of traversal
-            self.ranges = [self.act_range_e, self.act_range_c, self.act_range_a, self.act_range_b]
-            #array to store the circles for the corners, in order of traversal
-            self.circles = [self.circle_e, self.circle_c, self.circle_a, self.circle_b]
-            #array to store PID values of each line, in order of traversal, each element is a tuple (kp, ki, kd)
-            self.PIDs = [self.path_D_PID, self.path_A_PID, self.path_B_PID, self.path_C_PID]
-            #array to store PID values of each circle, in order of traversal, each element is a tuple (kp, ki, kd)
-            self.curve_PIDs = [self.circle_e_PID, self.circle_c_PID, self.circle_a_PID, self.circle_b_PID]
+            pts   = 'ocdheabnmilp'
+            paths = 'GAHBEAFDECHD'
+        else:
+            pts = ''
+            path = ''
+
+        pts = list(pts)
+        paths = list(paths)
+
+        self.turning_pts = []
+        self.lines = []
+        self.ranges = []
+        self.circles = []
+        self.PIDs = []
+        self.curve_PIDs = []
+
+        for p in pts:
+            self.turning_pts.append(self.pt[p])
+            self.ranges.append(self.act_range[p])
+            self.circles.append(self.circle[p])
+            self.curve_PIDs.append(self.circle_PID[p])
+        for p in paths:
+            self.lines.append(self.path[p])
+            self.PIDs.append(self.path_PID[p])
+
 
 
     #helper functions for generate_map()
