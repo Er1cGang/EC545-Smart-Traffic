@@ -65,19 +65,19 @@ class CAV():
         
         self.pt = {}
         self.pt['a'] = (250, -1200)
-        self.pt['b'] = (250, 160)
+        self.pt['b'] = (250, 180)
         self.pt['c'] = (250, 570)
         self.pt['d'] = (250, 2000)
         self.pt['e'] = (-2000, -1200)
-        self.pt['f'] = (-2000, 160)
-        self.pt['g'] = (-2025, 570)
-        self.pt['h'] = (-2025, 2000)
-        self.pt['i'] = (-2420, -1200)
-        self.pt['j'] = (-2420, 140)
-        self.pt['k'] = (-2410, 570)
-        self.pt['l'] = (-2410, 2000)
+        self.pt['f'] = (-2000, 180)
+        self.pt['g'] = (-2000, 570)
+        self.pt['h'] = (-2000, 2000)
+        self.pt['i'] = (-2400, -1200)
+        self.pt['j'] = (-2400, 180)
+        self.pt['k'] = (-2400, 570)
+        self.pt['l'] = (-2400, 2000)
         self.pt['m'] = (-4400, -1200)
-        self.pt['n'] = (-4400, 140) 
+        self.pt['n'] = (-4400, 180) 
         self.pt['o'] = (-4400, 570)
         self.pt['p'] = (-4400, 2000)
 
@@ -138,14 +138,14 @@ class CAV():
 
         #values of each line, each element is a tuple (kp, ki, kd)
         self.path_PID = {}
-        self.path_PID['A'] = (0.001, 0.007, 0.001)
-        self.path_PID['B'] = (-0.001, -0.007, -0.001)
-        self.path_PID['C'] = (0.001, 0.007, 0.001)
-        self.path_PID['D'] = (-0.001, -0.007, -0.001)
-        self.path_PID['E'] = (0.001, 0.007, 0.001)
-        self.path_PID['F'] = (-0.001, -0.007, -0.001)
-        self.path_PID['G'] = (0.001, 0.007, 0.001)
-        self.path_PID['H'] = (-0.001, -0.007, -0.001)
+        self.path_PID['A'] = (0.0011, 0.007, 0.001)
+        self.path_PID['B'] = (-0.0011, -0.007, -0.001)
+        self.path_PID['C'] = (0.0011, 0.007, 0.001)
+        self.path_PID['D'] = (-0.0011, -0.007, -0.001)
+        self.path_PID['E'] = (0.0011, 0.007, 0.001)
+        self.path_PID['F'] = (-0.0011, -0.007, -0.001)
+        self.path_PID['G'] = (0.0011, 0.007, 0.001)
+        self.path_PID['H'] = (-0.0011, -0.007, -0.001)
 
         #PID values of each circle, each element is a tuple (kp, ki, kd)
         self.circle_PID = {}
@@ -174,7 +174,7 @@ class CAV():
             paths = 'GAHBEAFDECHD'
         else:
             pts = ''
-            path = ''
+            paths = ''
 
         pts = list(pts)
         paths = list(paths)

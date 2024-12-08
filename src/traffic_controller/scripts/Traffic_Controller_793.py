@@ -73,24 +73,28 @@ def controller():
             e = (current_line[0]*CAV1.position_x + current_line[1]*CAV1.position_z + current_line[2])/((current_line[0]**2 + current_line[1]**2)**0.5)
 
         if abs(CAV1.position_x - CAV1.pt['g'][0]) < CAV1.act_range['g'][0] and \
-            abs(CAV1.position_z - CAV1.pt['g'][1]) < CAV1.act_range['g'][1] and \
+            CAV1.position_z - CAV1.pt['g'][1] < CAV1.act_range['g'][1] and \
+            CAV1.position_z - CAV1.pt['g'][1] > 0 and \
             CAV1.lines[current] == CAV1.path['B'] and \
             not CAV1.green_NS:
             v_ref_CAV1 = 0
 
         elif abs(CAV1.position_x - CAV1.pt['j'][0]) < CAV1.act_range['j'][0] and \
-            abs(CAV1.position_z - CAV1.pt['j'][1]) < CAV1.act_range['j'][1] and \
+            CAV1.position_z - CAV1.pt['j'][1] > -CAV1.act_range['j'][1] and \
+            CAV1.position_z - CAV1.pt['j'][1] < 0 and \
             CAV1.lines[current] == CAV1.path['C'] and \
             not CAV1.green_NS:
             v_ref_CAV1 = 0
 
-        elif abs(CAV1.position_x - CAV1.pt['k'][0]) < CAV1.act_range['k'][0] and \
+        elif CAV1.position_x - CAV1.pt['k'][0] > -CAV1.act_range['k'][0] and \
+            CAV1.position_x - CAV1.pt['k'][0] < 0 and \
             abs(CAV1.position_z - CAV1.pt['k'][1]) < CAV1.act_range['k'][1] and \
             CAV1.lines[current] == CAV1.path['G'] and \
             not CAV1.green_EW:
             v_ref_CAV1 = 0
 
-        elif abs(CAV1.position_x - CAV1.pt['f'][0]) < CAV1.act_range['f'][0] and \
+        elif CAV1.position_x - CAV1.pt['f'][0] < CAV1.act_range['f'][0] and \
+            CAV1.position_x - CAV1.pt['f'][0] > 0 and \
             abs(CAV1.position_z - CAV1.pt['f'][1]) < CAV1.act_range['f'][1] and \
             CAV1.lines[current] == CAV1.path['F'] and \
             not CAV1.green_EW:
