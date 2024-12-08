@@ -17,7 +17,7 @@ class listener:
 
     def listener(self):
         rospy.init_node("vs_listener", anonymous=True)
-        rospy.Subscriber("/vel_steer_limo780", AckermannDrive, self.callback)
+        rospy.Subscriber("/vel_steer_limo793", AckermannDrive, self.callback)
 
 class limo_controller:
     def __init__(self):

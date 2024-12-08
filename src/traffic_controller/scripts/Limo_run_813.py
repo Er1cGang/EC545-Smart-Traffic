@@ -50,9 +50,9 @@ class limo_controller:
             min_dist = 2000
             count = 0
             for measure in measures:
-                if measure.angle < 190 and measure.angle > 170:
+                if measure.angle < 195 and measure.angle > 165:
                     count += 1
-                    print(f"dist: {measure.distance}")
+                    # print(f"dist: {measure.distance}")
                     if measure.distance < min_dist and measure.distance > 10:
                         min_dist = measure.distance
             print(f"min_dist: {min_dist}")

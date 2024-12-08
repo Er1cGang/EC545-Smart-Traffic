@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from ackermann_msgs.msg import AckermannDrive
 from traffic_controller.msg import TrafficSignal
+from std_msgs.msg import String
 
 class CAV():
     def __init__(self, node_name):
@@ -28,7 +29,7 @@ class CAV():
         rospy.init_node("listen_pos", anonymous=True)
         self.sub = rospy.Subscriber('/vrpn_client_node/'+self.node_name+'/pose', PoseStamped, self.callback)
         self.pub = rospy.Publisher('vel_steer_'+self.node_name,AckermannDrive,queue_size=10) #topic name = CAV_Data
-        self.traf_sub = rospy.Subscriber('/traffic_signal', TrafficSignal, self.traf_callback)
+        self.traf_sub = rospy.Subscriber('/rpi_light_signal', String, self.traf_callback)
         rospy.Rate(10)
         print('map initiated')
 
@@ -39,8 +40,19 @@ class CAV():
         self.Receivedata=1
 
     def traf_callback(self, msg):
-        self.green_NS = msg.green_NS
-        self.green_EW = msg.green_EW
+        if msg.data[0] == 'T':
+            self.green_NS = True
+        elif msg.data[0] == 'F':
+            self.green_NS = False
+
+        if msg.data[1]== 'T':
+            self.green_EW = True
+        elif msg.data[1] == 'F':
+            self.green_EW = False
+
+        print(f"debug: green_NS:{self.green_NS}, green_EW:{self.green_EW}")
+        # self.green_NS = msg.green_NS
+        # self.green_EW = msg.green_EW
 
 
     def generate_map(self, enter=0, exit=0):
@@ -52,22 +64,22 @@ class CAV():
         self.lane_width = 450
         
         self.pt = {}
-        self.pt['a'] = (320, -1955)
-        self.pt['b'] = (275, 200)
-        self.pt['c'] = (275, 620)
-        self.pt['d'] = (300, 2590)
-        self.pt['e'] = (-2020, -1955)
-        self.pt['f'] = (-2025, 270)
-        self.pt['g'] = (-2030, 635)
-        self.pt['h'] = (-2035, 2563)
-        self.pt['i'] = (-2400, -1917)
-        self.pt['j'] = (-2520, 276.1)
-        self.pt['k'] = (-2505, 596)
-        self.pt['l'] = (-2379, 2531)
-        self.pt['m'] = (-4704, -1900)
-        self.pt['n'] = (-4690, 135)
-        self.pt['o'] = (-4662, 525)
-        self.pt['p'] = (-4630, 2550)
+        self.pt['a'] = (250, -1200)
+        self.pt['b'] = (250, 160)
+        self.pt['c'] = (250, 570)
+        self.pt['d'] = (250, 2000)
+        self.pt['e'] = (-2000, -1200)
+        self.pt['f'] = (-2000, 160)
+        self.pt['g'] = (-2025, 570)
+        self.pt['h'] = (-2025, 2000)
+        self.pt['i'] = (-2420, -1200)
+        self.pt['j'] = (-2420, 140)
+        self.pt['k'] = (-2410, 570)
+        self.pt['l'] = (-2410, 2000)
+        self.pt['m'] = (-4400, -1200)
+        self.pt['n'] = (-4400, 140) 
+        self.pt['o'] = (-4400, 570)
+        self.pt['p'] = (-4400, 2000)
 
 
         #equations for each line, in the A B C form, each variable is a tuple (A, B, C)
@@ -126,14 +138,14 @@ class CAV():
 
         #values of each line, each element is a tuple (kp, ki, kd)
         self.path_PID = {}
-        self.path_PID['A'] = (0.0006, 0.007, 0.001)
-        self.path_PID['B'] = (-0.0006, -0.007, -0.001)
-        self.path_PID['C'] = (0.0006, 0.007, 0.001)
-        self.path_PID['D'] = (-0.0006, -0.007, -0.001)
-        self.path_PID['E'] = (0.0006, 0.007, 0.001)
-        self.path_PID['F'] = (-0.0006, -0.007, -0.001)
-        self.path_PID['G'] = (0.0006, 0.007, 0.001)
-        self.path_PID['H'] = (-0.0006, -0.007, -0.001)
+        self.path_PID['A'] = (0.001, 0.007, 0.001)
+        self.path_PID['B'] = (-0.001, -0.007, -0.001)
+        self.path_PID['C'] = (0.001, 0.007, 0.001)
+        self.path_PID['D'] = (-0.001, -0.007, -0.001)
+        self.path_PID['E'] = (0.001, 0.007, 0.001)
+        self.path_PID['F'] = (-0.001, -0.007, -0.001)
+        self.path_PID['G'] = (0.001, 0.007, 0.001)
+        self.path_PID['H'] = (-0.001, -0.007, -0.001)
 
         #PID values of each circle, each element is a tuple (kp, ki, kd)
         self.circle_PID = {}
