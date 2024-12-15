@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+broadcast chan Init;
+broadcast chan Step;
+urgent chan STA;
+urgent chan DYN;
+urgent chan EMG;
+
+bool sNS1 = true; // True if the NORTH sensor is detecting a vehicle
+bool sNS2 = false; // True if the SOUTH sensor is detecting a vehicle
+bool sEW1 = true;  // True if the EAST sensor is detecting a vehicle
+bool sEW2 = false; // True if the WEST sensor is detecting a vehicle
+
+bool emgNS = false; // True if the North-South direction is green
+bool emgEW = false; // True if the East-West direction is green
+
+int NS = 1; // State of the NS light: 0 = Red, 1 = Green, 2 = Yellow
+int EW = 0; // State of the EW light: 0 = Red, 1 = Green, 2 = Yellow
+
+int t = 0;  // Pseudo clock - FSM
+int tc = 0; // Pseudo clock - Controller</declaration>
+	<template>
+		<name x="5" y="5">Static</name>
+		<declaration>// Place local declarations here.
+//clock t;</declaration>
+		<location id="id0" x="-442" y="-170" color="#a9a9a9">
+			<name x="-493" y="-178">INIT</name>
+		</location>
+		<location id="id1" x="280" y="-169" color="#ff0000">
+			<name x="289" y="-153">NS_R__EW_R_0</name>
+		</location>
+		<location id="id2" x="-246" y="-170" color="#00ff00">
+			<name x="-238" y="-153">NS_G__EW_R</name>
+		</location>
+		<location id="id3" x="17" y="-169" color="#ffa500">
+			<name x="26" y="-153">NS_Y__EW_R</name>
+		</location>
+		<location id="id4" x="280" y="17" color="#00ff00">
+			<name x="289" y="-17">NS_R__EW_G</name>
+		</location>
+		<location id="id5" x="-246" y="16" color="#ff0000">
+			<name x="-238" y="-17">NS_R__EW_R_1</name>
+		</location>
+		<location id="id6" x="17" y="17" color="#ffa500">
+			<name x="25" y="-17">NS_R__EW_Y</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id7">
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-212" y="34">t&gt;=2</label>
+			<label kind="synchronisation" x="-212" y="0">STA?</label>
+			<label kind="assignment" x="-212" y="17">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id4"/>
+			<target ref="id6"/>
+			<label kind="guard" x="51" y="34">t&gt;=8</label>
+			<label kind="synchronisation" x="51" y="0">STA?</label>
+			<label kind="assignment" x="51" y="17">t:=0, NS:=0, EW=2</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="guard" x="263" y="51">t&lt;8</label>
+			<label kind="synchronisation" x="263" y="68">STA?</label>
+			<nail x="254" y="51"/>
+			<nail x="305" y="51"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id1"/>
+			<target ref="id4"/>
+			<label kind="guard" x="289" y="-110">t&gt;=2</label>
+			<label kind="synchronisation" x="289" y="-76">STA?</label>
+			<label kind="assignment" x="289" y="-93">t:=0, NS:=0, EW=1</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id5"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-238" y="-110">t&gt;=2</label>
+			<label kind="synchronisation" x="-238" y="-76">STA?</label>
+			<label kind="assignment" x="-238" y="-93">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="guard" x="263" y="-221">t&lt;2</label>
+			<label kind="synchronisation" x="263" y="-238">STA?</label>
+			<nail x="254" y="-203"/>
+			<nail x="305" y="-203"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="guard" x="0" y="-221">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="-238">STA?</label>
+			<nail x="-9" y="-203"/>
+			<nail x="42" y="-203"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id2"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-263" y="-221">t&lt;8</label>
+			<label kind="synchronisation" x="-263" y="-238">STA?</label>
+			<nail x="-272" y="-204"/>
+			<nail x="-221" y="-204"/>
+		</transition>
+		<transition id="id15">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="51" y="-204">t&gt;=2</label>
+			<label kind="synchronisation" x="51" y="-170">STA?</label>
+			<label kind="assignment" x="51" y="-187">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-212" y="-204">t&gt;=8</label>
+			<label kind="synchronisation" x="-212" y="-170">STA?</label>
+			<label kind="assignment" x="-212" y="-187">t:=0, NS:=2, EW=0</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id0"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-416" y="-187">Init?</label>
+			<label kind="assignment" x="-416" y="-170">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id18">
+			<source ref="id6"/>
+			<target ref="id6"/>
+			<label kind="guard" x="0" y="51">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="68">STA?</label>
+			<nail x="-9" y="51"/>
+			<nail x="42" y="51"/>
+		</transition>
+		<transition id="id19">
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-263" y="51">t&lt;2</label>
+			<label kind="synchronisation" x="-263" y="68">STA?</label>
+			<nail x="-272" y="50"/>
+			<nail x="-221" y="50"/>
+		</transition>
+	</template>
+	<template>
+		<name>Dynamic</name>
+		<declaration>// Place local declarations here.
+//clock t;</declaration>
+		<location id="id20" x="280" y="136" color="#00ff00">
+			<name x="289" y="102">NS_R__EW_G</name>
+		</location>
+		<location id="id21" x="-246" y="-51" color="#00ff00">
+			<name x="-238" y="-34">NS_G__EW_R</name>
+		</location>
+		<location id="id22" x="17" y="136" color="#ffa500">
+			<name x="26" y="102">NS_R__EW_Y</name>
+		</location>
+		<location id="id23" x="-246" y="135" color="#ff0000">
+			<name x="-238" y="102">NS_R__EW_R_1</name>
+		</location>
+		<location id="id24" x="280" y="-50" color="#ff0000">
+			<name x="289" y="-34">NS_R__EW_R_0</name>
+		</location>
+		<location id="id25" x="-442" y="-51" color="#a9a9a9">
+			<name x="-493" y="-59">INIT</name>
+		</location>
+		<location id="id26" x="17" y="-50" color="#ffa500">
+			<name x="26" y="-34">NS_Y__EW_R</name>
+		</location>
+		<init ref="id25"/>
+		<transition id="id27">
+			<source ref="id21"/>
+			<target ref="id26"/>
+			<label kind="guard" x="-178" y="17">t&gt;=15 and !(sNS1 or sNS2)</label>
+			<label kind="synchronisation" x="-178" y="-17">DYN?</label>
+			<label kind="assignment" x="-178" y="0">t:=0, NS:=2, EW:=0</label>
+			<nail x="-195" y="0"/>
+			<nail x="17" y="0"/>
+		</transition>
+		<transition id="id28">
+			<source ref="id20"/>
+			<target ref="id22"/>
+			<label kind="guard" x="34" y="51">t&gt;=15 and !(sNS1 or sNS2)</label>
+			<label kind="synchronisation" x="34" y="85">DYN?</label>
+			<label kind="assignment" x="34" y="68">t:=0, NS:=0, EW:=2</label>
+			<nail x="229" y="85"/>
+			<nail x="17" y="85"/>
+		</transition>
+		<transition id="id29">
+			<source ref="id20"/>
+			<target ref="id20"/>
+			<label kind="guard" x="212" y="212">!sNS1 and !sNS2</label>
+			<label kind="synchronisation" x="263" y="229">DYN?</label>
+			<nail x="246" y="178"/>
+			<nail x="246" y="212"/>
+			<nail x="314" y="212"/>
+			<nail x="314" y="178"/>
+		</transition>
+		<transition id="id30">
+			<source ref="id21"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-314" y="-161">!sEW1 and !sEW2</label>
+			<label kind="synchronisation" x="-262" y="-144">DYN?</label>
+			<nail x="-280" y="-93"/>
+			<nail x="-280" y="-127"/>
+			<nail x="-212" y="-127"/>
+			<nail x="-212" y="-93"/>
+		</transition>
+		<transition id="id31">
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="guard" x="-212" y="153">t&gt;=2</label>
+			<label kind="synchronisation" x="-212" y="119">DYN?</label>
+			<label kind="assignment" x="-212" y="136">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id32">
+			<source ref="id20"/>
+			<target ref="id22"/>
+			<label kind="guard" x="51" y="153">t&gt;=5 and (sNS1 or sNS2)</label>
+			<label kind="synchronisation" x="51" y="119">DYN?</label>
+			<label kind="assignment" x="51" y="136">t:=0, NS:=0, EW=2</label>
+		</transition>
+		<transition id="id33">
+			<source ref="id20"/>
+			<target ref="id20"/>
+			<label kind="guard" x="263" y="170">t&lt;5</label>
+			<label kind="synchronisation" x="263" y="187">DYN?</label>
+			<nail x="254" y="170"/>
+			<nail x="305" y="170"/>
+		</transition>
+		<transition id="id34">
+			<source ref="id24"/>
+			<target ref="id20"/>
+			<label kind="guard" x="289" y="9">t&gt;=2</label>
+			<label kind="synchronisation" x="289" y="43">DYN?</label>
+			<label kind="assignment" x="289" y="26">t:=0, NS:=0, EW=1</label>
+		</transition>
+		<transition id="id35">
+			<source ref="id23"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-238" y="25">t&gt;=2</label>
+			<label kind="synchronisation" x="-238" y="59">DYN?</label>
+			<label kind="assignment" x="-238" y="42">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id36">
+			<source ref="id24"/>
+			<target ref="id24"/>
+			<label kind="guard" x="263" y="-102">t&lt;2</label>
+			<label kind="synchronisation" x="263" y="-119">DYN?</label>
+			<nail x="254" y="-84"/>
+			<nail x="305" y="-84"/>
+		</transition>
+		<transition id="id37">
+			<source ref="id26"/>
+			<target ref="id26"/>
+			<label kind="guard" x="0" y="-102">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="-119">DYN?</label>
+			<nail x="-9" y="-84"/>
+			<nail x="42" y="-84"/>
+		</transition>
+		<transition id="id38">
+			<source ref="id21"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-263" y="-102">t&lt;5</label>
+			<label kind="synchronisation" x="-263" y="-119">DYN?</label>
+			<nail x="-272" y="-85"/>
+			<nail x="-221" y="-85"/>
+		</transition>
+		<transition id="id39">
+			<source ref="id26"/>
+			<target ref="id24"/>
+			<label kind="guard" x="51" y="-85">t&gt;=2</label>
+			<label kind="synchronisation" x="51" y="-51">DYN?</label>
+			<label kind="assignment" x="51" y="-68">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id40">
+			<source ref="id21"/>
+			<target ref="id26"/>
+			<label kind="guard" x="-212" y="-85">t&gt;=5 and (sEW1 or sEW2)</label>
+			<label kind="synchronisation" x="-212" y="-51">DYN?</label>
+			<label kind="assignment" x="-212" y="-68">t:=0, NS:=2, EW=0</label>
+		</transition>
+		<transition id="id41">
+			<source ref="id25"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-416" y="-68">Init?</label>
+			<label kind="assignment" x="-416" y="-51">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id42">
+			<source ref="id22"/>
+			<target ref="id22"/>
+			<label kind="guard" x="0" y="170">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="187">DYN?</label>
+			<nail x="-9" y="170"/>
+			<nail x="42" y="170"/>
+		</transition>
+		<transition id="id43">
+			<source ref="id23"/>
+			<target ref="id23"/>
+			<label kind="guard" x="-263" y="170">t&lt;2</label>
+			<label kind="synchronisation" x="-263" y="187">DYN?</label>
+			<nail x="-272" y="169"/>
+			<nail x="-221" y="169"/>
+		</transition>
+	</template>
+	<template>
+		<name>Emergency</name>
+		<declaration>// Place local declarations here.
+//clock t;</declaration>
+		<location id="id44" x="280" y="101" color="#00ff00">
+			<name x="289" y="67">NS_R__EW_G</name>
+		</location>
+		<location id="id45" x="-246" y="-86" color="#00ff00">
+			<name x="-238" y="-69">NS_G__EW_R</name>
+		</location>
+		<location id="id46" x="17" y="101" color="#ffa500">
+			<name x="25" y="68">NS_R__EW_Y</name>
+		</location>
+		<location id="id47" x="-246" y="100" color="#ff0000">
+			<name x="-238" y="67">NS_R__EW_R_1</name>
+		</location>
+		<location id="id48" x="280" y="-85" color="#ff0000">
+			<name x="289" y="-69">NS_R__EW_R_0</name>
+		</location>
+		<location id="id49" x="-442" y="-86" color="#a9a9a9">
+			<name x="-493" y="-94">INIT</name>
+		</location>
+		<location id="id50" x="17" y="-85" color="#ffa500">
+			<name x="26" y="-69">NS_Y__EW_R</name>
+		</location>
+		<init ref="id49"/>
+		<transition id="id51">
+			<source ref="id46"/>
+			<target ref="id47"/>
+			<label kind="guard" x="-212" y="118">t&gt;=2</label>
+			<label kind="synchronisation" x="-212" y="84">EMG?</label>
+			<label kind="assignment" x="-212" y="101">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id52">
+			<source ref="id44"/>
+			<target ref="id46"/>
+			<label kind="guard" x="51" y="119">!emgEW</label>
+			<label kind="synchronisation" x="51" y="84">EMG?</label>
+			<label kind="assignment" x="51" y="102">t:=0, NS:=0, EW=2</label>
+		</transition>
+		<transition id="id53">
+			<source ref="id44"/>
+			<target ref="id44"/>
+			<label kind="guard" x="263" y="136">emgEW</label>
+			<label kind="synchronisation" x="263" y="153">EMG?</label>
+			<nail x="254" y="135"/>
+			<nail x="305" y="135"/>
+		</transition>
+		<transition id="id54">
+			<source ref="id48"/>
+			<target ref="id44"/>
+			<label kind="guard" x="289" y="-26">t&gt;=2</label>
+			<label kind="synchronisation" x="289" y="8">EMG?</label>
+			<label kind="assignment" x="289" y="-9">t:=0, NS:=0, EW=1</label>
+		</transition>
+		<transition id="id55">
+			<source ref="id47"/>
+			<target ref="id45"/>
+			<label kind="guard" x="-238" y="-26">t&gt;=2</label>
+			<label kind="synchronisation" x="-238" y="8">EMG?</label>
+			<label kind="assignment" x="-238" y="-9">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id56">
+			<source ref="id48"/>
+			<target ref="id48"/>
+			<label kind="guard" x="263" y="-137">t&lt;2</label>
+			<label kind="synchronisation" x="263" y="-154">EMG?</label>
+			<nail x="254" y="-119"/>
+			<nail x="305" y="-119"/>
+		</transition>
+		<transition id="id57">
+			<source ref="id50"/>
+			<target ref="id50"/>
+			<label kind="guard" x="0" y="-137">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="-154">EMG?</label>
+			<nail x="-9" y="-119"/>
+			<nail x="42" y="-119"/>
+		</transition>
+		<transition id="id58">
+			<source ref="id45"/>
+			<target ref="id45"/>
+			<label kind="guard" x="-263" y="-144">emgNS</label>
+			<label kind="synchronisation" x="-263" y="-161">EMG?</label>
+			<nail x="-272" y="-120"/>
+			<nail x="-221" y="-120"/>
+		</transition>
+		<transition id="id59">
+			<source ref="id50"/>
+			<target ref="id48"/>
+			<label kind="guard" x="51" y="-120">t&gt;=2</label>
+			<label kind="synchronisation" x="51" y="-86">EMG?</label>
+			<label kind="assignment" x="51" y="-103">t:=0, NS:=0, EW=0</label>
+		</transition>
+		<transition id="id60">
+			<source ref="id45"/>
+			<target ref="id50"/>
+			<label kind="guard" x="-212" y="-119">!emgNS</label>
+			<label kind="synchronisation" x="-212" y="-86">EMG?</label>
+			<label kind="assignment" x="-212" y="-103">t:=0, NS:=2, EW=0</label>
+		</transition>
+		<transition id="id61">
+			<source ref="id49"/>
+			<target ref="id45"/>
+			<label kind="synchronisation" x="-416" y="-103">Init?</label>
+			<label kind="assignment" x="-416" y="-86">t:=0, NS:=1, EW=0</label>
+		</transition>
+		<transition id="id62">
+			<source ref="id46"/>
+			<target ref="id46"/>
+			<label kind="guard" x="0" y="135">t&lt;2</label>
+			<label kind="synchronisation" x="0" y="152">EMG?</label>
+			<nail x="-9" y="135"/>
+			<nail x="42" y="135"/>
+		</transition>
+		<transition id="id63">
+			<source ref="id47"/>
+			<target ref="id47"/>
+			<label kind="guard" x="-263" y="135">t&lt;2</label>
+			<label kind="synchronisation" x="-263" y="152">EMG?</label>
+			<nail x="-272" y="134"/>
+			<nail x="-221" y="134"/>
+		</transition>
+	</template>
+	<template>
+		<name>Controller</name>
+		<declaration>// Place local declarations here.
+//clock tc;</declaration>
+		<location id="id64" x="-680" y="-102" color="#a9a9a9">
+			<name x="-731" y="-110">INIT</name>
+		</location>
+		<location id="id65" x="-578" y="-102" color="#0000ff">
+			<name x="-561" y="-119">STATIC</name>
+			<label kind="invariant" x="-501" y="-119">tc&lt;=1</label>
+		</location>
+		<location id="id66" x="-578" y="170" color="#0000ff">
+			<name x="-561" y="170">DYNAMIC</name>
+			<label kind="invariant" x="-493" y="170">tc&lt;=1</label>
+		</location>
+		<location id="id67" x="-357" y="34" color="#0000ff">
+			<name x="-365" y="59">EMERGENCY</name>
+			<label kind="invariant" x="-280" y="59">tc&lt;=1</label>
+		</location>
+		<init ref="id64"/>
+		<transition id="id68">
+			<source ref="id66"/>
+			<target ref="id67"/>
+			<label kind="guard" x="-510" y="76">emgNS or emgEW</label>
+			<label kind="assignment" x="-510" y="59">tc:=0</label>
+			<nail x="-484" y="85"/>
+		</transition>
+		<transition id="id69">
+			<source ref="id67"/>
+			<target ref="id65"/>
+			<label kind="guard" x="-510" y="-51">!emgNS and !emgEW and 
+((sNS1 or sNS2) and (sEW1 or sEW2))</label>
+			<label kind="assignment" x="-510" y="-17">tc:=0</label>
+			<nail x="-484" y="-17"/>
+		</transition>
+		<transition id="id70">
+			<source ref="id65"/>
+			<target ref="id66"/>
+			<label kind="guard" x="-824" y="8">!((sNS1 or sNS2) and (sEW1 or sEW2))</label>
+			<label kind="assignment" x="-561" y="25">tc:=0</label>
+			<nail x="-561" y="34"/>
+		</transition>
+		<transition id="id71">
+			<source ref="id66"/>
+			<target ref="id65"/>
+			<label kind="guard" x="-884" y="42">((sNS1 or sNS2) and (sEW1 or sEW2))</label>
+			<label kind="assignment" x="-637" y="25">tc:=0</label>
+			<nail x="-595" y="34"/>
+		</transition>
+		<transition id="id72">
+			<source ref="id67"/>
+			<target ref="id66"/>
+			<label kind="guard" x="-450" y="127">!emgNS and !emgEW and 
+!((sNS1 or sNS2) and (sEW1 or sEW2))</label>
+			<label kind="assignment" x="-450" y="110">tc:=0</label>
+			<nail x="-459" y="119"/>
+		</transition>
+		<transition id="id73">
+			<source ref="id65"/>
+			<target ref="id67"/>
+			<label kind="guard" x="-467" y="-93">emgNS or emgEW</label>
+			<label kind="assignment" x="-467" y="-76">tc:=0</label>
+			<nail x="-459" y="-51"/>
+		</transition>
+		<transition id="id74">
+			<source ref="id65"/>
+			<target ref="id65"/>
+			<label kind="guard" x="-595" y="-170">tc&gt;=1</label>
+			<label kind="synchronisation" x="-595" y="-187">STA!</label>
+			<label kind="assignment" x="-595" y="-153">tc:=0</label>
+			<nail x="-604" y="-136"/>
+			<nail x="-553" y="-136"/>
+		</transition>
+		<transition id="id75">
+			<source ref="id64"/>
+			<target ref="id65"/>
+			<label kind="synchronisation" x="-654" y="-119">Init?</label>
+			<label kind="assignment" x="-654" y="-102">tc:=0</label>
+		</transition>
+		<transition id="id76">
+			<source ref="id66"/>
+			<target ref="id66"/>
+			<label kind="guard" x="-595" y="221">tc&gt;=1</label>
+			<label kind="synchronisation" x="-595" y="204">DYN!</label>
+			<label kind="assignment" x="-595" y="238">tc:=0</label>
+			<nail x="-553" y="204"/>
+			<nail x="-604" y="204"/>
+		</transition>
+		<transition id="id77">
+			<source ref="id67"/>
+			<target ref="id67"/>
+			<label kind="guard" x="-323" y="25">tc&gt;=1</label>
+			<label kind="synchronisation" x="-323" y="8">EMG!</label>
+			<label kind="assignment" x="-323" y="42">tc:=0</label>
+			<nail x="-323" y="9"/>
+			<nail x="-323" y="60"/>
+		</transition>
+	</template>
+	<template>
+		<name>LightNS</name>
+		<location id="id78" x="-136" y="0">
+			<name x="-178" y="-25">INIT</name>
+		</location>
+		<location id="id79" x="-34" y="-68" color="#00ff00">
+			<name x="-25" y="-93">GREEN</name>
+		</location>
+		<location id="id80" x="-34" y="68" color="#ff0000">
+			<name x="-25" y="76">RED</name>
+		</location>
+		<location id="id81" x="68" y="0" color="#ffa500">
+			<name x="76" y="-25">YELLOW</name>
+		</location>
+		<init ref="id78"/>
+		<transition id="id82">
+			<source ref="id78"/>
+			<target ref="id81"/>
+			<label kind="guard" x="-68" y="110">NS == 2</label>
+			<label kind="synchronisation" x="-68" y="136">Init?</label>
+			<nail x="-170" y="34"/>
+			<nail x="-170" y="85"/>
+			<nail x="-102" y="136"/>
+			<nail x="34" y="136"/>
+			<nail x="102" y="85"/>
+			<nail x="102" y="34"/>
+		</transition>
+		<transition id="id83">
+			<source ref="id80"/>
+			<target ref="id79"/>
+			<label kind="guard" x="-93" y="-8">NS == 1</label>
+			<label kind="synchronisation" x="-76" y="-25">Step?</label>
+		</transition>
+		<transition id="id84">
+			<source ref="id81"/>
+			<target ref="id80"/>
+			<label kind="guard" x="25" y="51">NS == 0</label>
+			<label kind="synchronisation" x="25" y="34">Step?</label>
+		</transition>
+		<transition id="id85">
+			<source ref="id79"/>
+			<target ref="id81"/>
+			<label kind="guard" x="25" y="-68">NS == 2</label>
+			<label kind="synchronisation" x="25" y="-51">Step?</label>
+		</transition>
+		<transition id="id86">
+			<source ref="id78"/>
+			<target ref="id80"/>
+			<label kind="guard" x="-153" y="51">NS == 0</label>
+			<label kind="synchronisation" x="-136" y="34">Init?</label>
+		</transition>
+		<transition id="id87">
+			<source ref="id78"/>
+			<target ref="id79"/>
+			<label kind="guard" x="-153" y="-68">NS == 1</label>
+			<label kind="synchronisation" x="-136" y="-51">Init?</label>
+		</transition>
+	</template>
+	<template>
+		<name>LightEW</name>
+		<location id="id88" x="-136" y="0">
+			<name x="-178" y="-25">INIT</name>
+		</location>
+		<location id="id89" x="68" y="0" color="#ffa500">
+			<name x="76" y="-25">YELLOW</name>
+		</location>
+		<location id="id90" x="-34" y="68" color="#ff0000">
+			<name x="-25" y="76">RED</name>
+		</location>
+		<location id="id91" x="-34" y="-68" color="#00ff00">
+			<name x="-25" y="-93">GREEN</name>
+		</location>
+		<init ref="id88"/>
+		<transition id="id92">
+			<source ref="id88"/>
+			<target ref="id89"/>
+			<label kind="guard" x="-68" y="110">EW == 2</label>
+			<label kind="synchronisation" x="-68" y="136">Init?</label>
+			<nail x="-170" y="34"/>
+			<nail x="-170" y="85"/>
+			<nail x="-102" y="136"/>
+			<nail x="34" y="136"/>
+			<nail x="102" y="85"/>
+			<nail x="102" y="34"/>
+		</transition>
+		<transition id="id93">
+			<source ref="id90"/>
+			<target ref="id91"/>
+			<label kind="guard" x="-93" y="-8">EW == 1</label>
+			<label kind="synchronisation" x="-76" y="-25">Step?</label>
+		</transition>
+		<transition id="id94">
+			<source ref="id89"/>
+			<target ref="id90"/>
+			<label kind="guard" x="25" y="51">EW == 0</label>
+			<label kind="synchronisation" x="25" y="34">Step?</label>
+		</transition>
+		<transition id="id95">
+			<source ref="id91"/>
+			<target ref="id89"/>
+			<label kind="guard" x="25" y="-68">EW == 2</label>
+			<label kind="synchronisation" x="25" y="-51">Step?</label>
+		</transition>
+		<transition id="id96">
+			<source ref="id88"/>
+			<target ref="id90"/>
+			<label kind="guard" x="-153" y="51">EW == 0</label>
+			<label kind="synchronisation" x="-136" y="34">Init?</label>
+		</transition>
+		<transition id="id97">
+			<source ref="id88"/>
+			<target ref="id91"/>
+			<label kind="guard" x="-153" y="-68">EW == 1</label>
+			<label kind="synchronisation" x="-136" y="-51">Init?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Stepper</name>
+		<declaration>clock x;</declaration>
+		<location id="id98" x="-127" y="0">
+			<name x="-118" y="8">INIT</name>
+		</location>
+		<location id="id99" x="0" y="0" color="#ff00ff">
+			<name x="-51" y="-17">STEP</name>
+			<label kind="invariant" x="-51" y="0">x&lt;=1</label>
+		</location>
+		<init ref="id98"/>
+		<transition id="id100">
+			<source ref="id99"/>
+			<target ref="id99"/>
+			<label kind="synchronisation" x="42" y="-8">Step!</label>
+			<label kind="assignment" x="42" y="8">x:=0</label>
+			<nail x="34" y="-34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id101">
+			<source ref="id98"/>
+			<target ref="id99"/>
+			<label kind="synchronisation" x="-102" y="-17">Init?</label>
+		</transition>
+	</template>
+	<template>
+		<name>Clock</name>
+		<declaration>clock x;</declaration>
+		<location id="id102" x="0" y="0">
+			<name x="-25" y="-34">TICK</name>
+			<label kind="invariant" x="-25" y="17">x&lt;=1</label>
+		</location>
+		<location id="id103" x="136" y="0">
+			<name x="126" y="-34">TOCK</name>
+			<label kind="invariant" x="126" y="17">x&lt;=1</label>
+		</location>
+		<location id="id104" x="-102" y="0">
+			<label kind="invariant" x="-119" y="17">x&lt;=0</label>
+		</location>
+		<init ref="id104"/>
+		<transition id="id105">
+			<source ref="id104"/>
+			<target ref="id102"/>
+			<label kind="synchronisation" x="-76" y="-17">Init!</label>
+			<label kind="assignment" x="-127" y="-34">t:=0, tc:=0</label>
+		</transition>
+		<transition id="id106">
+			<source ref="id103"/>
+			<target ref="id102"/>
+			<label kind="guard" x="51" y="17">x&gt;=1</label>
+			<label kind="synchronisation" x="51" y="59">Step!</label>
+			<label kind="assignment" x="0" y="42">t:=t+1, tc:=tc+1</label>
+			<nail x="102" y="34"/>
+			<nail x="34" y="34"/>
+		</transition>
+		<transition id="id107">
+			<source ref="id102"/>
+			<target ref="id103"/>
+			<label kind="guard" x="51" y="-34">x&gt;=1</label>
+			<label kind="synchronisation" x="51" y="-76">Step!</label>
+			<label kind="assignment" x="0" y="-59">t:=t+1, tc:=tc+1</label>
+			<nail x="34" y="-34"/>
+			<nail x="102" y="-34"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+MAIN = Controller();
+mSTA = Static();
+mDYN = Dynamic();
+mEMG = Emergency();
+sNS = LightNS();
+sEW = LightEW();
+step = Stepper();
+ARBITER = Clock();
+// List one or more processes to be composed into a system.
+system mSTA, mDYN, mEMG, sNS, sEW, ARBITER, MAIN;//, step;
+</system>
+	<simulator type="concrete">
+		<plot-widget title="P1.t">
+			<expression>P1.t</expression>
+		</plot-widget>
+	</simulator>
+	<queries>
+		<option key="--diagnostic" value="1"/>
+		<query>
+			<formula>sNS.RED --&gt; (sNS.GREEN or MAIN.EMERGENCY)</formula>
+			<comment>#1A - State transition RED -&gt; GREEN - NS</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:15:54 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>sEW.RED --&gt; (sEW.GREEN or MAIN.EMERGENCY)</formula>
+			<comment>#1B - State transition RED -&gt; GREEN - EW</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:15:56 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>sNS.YELLOW --&gt; sNS.RED</formula>
+			<comment>#2A - State transition YELLOW -&gt; RED - NS</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:15:57 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>sEW.YELLOW --&gt; sEW.RED</formula>
+			<comment>#2B - State transition YELLOW -&gt; RED - EW</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:15:58 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>sNS.GREEN --&gt; (sNS.RED or MAIN.EMERGENCY)</formula>
+			<comment>#3A - State transition GREEN -&gt; YELLOW - NS</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:16:00 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>sEW.GREEN --&gt; (sEW.RED or MAIN.EMERGENCY)</formula>
+			<comment>#3B - State transition GREEN -&gt; YELLOW - EW</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 01:16:08 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>emgNS --&gt; sNS.GREEN</formula>
+			<comment>#4A - Emergency vehicles must be granted right of way - NS</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:59:58 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>emgEW --&gt; sEW.GREEN</formula>
+			<comment>#4B - Emergency vehicles must be granted right of way - EW</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:59:56 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] ((sNS.RED or sNS.YELLOW) imply not emgNS) and (sEW.RED or sEW.YELLOW) imply not emgEW</formula>
+			<comment>#5 - Light must stay green until emergency vehicle no longer present</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:58:48 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] (sNS.RED or sEW.RED) or (sNS.INIT and sEW.INIT)</formula>
+			<comment>#6 - There must always be at least one light that is red</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:55:14 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment>#7 - The system must never deadlock</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:58:29 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>(!(sNS1 or sNS2) and !(sEW1 or sEW2)) --&gt; MAIN.STATIC</formula>
+			<comment>#8 - Conditions for STATIC mode - No traffic</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:58:14 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>(!((!(sNS1 or sNS2) and !(sEW1 or sEW2)) or ((sNS1 or sNS2) and (sEW1 or sEW2)))) --&gt; MAIN.DYNAMIC</formula>
+			<comment>#9 - Conditions for DYNAMIC mode - Sparse traffic</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:58:22 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>((sNS1 or sNS2) and (sEW1 or sEW2)) --&gt; MAIN.STATIC</formula>
+			<comment>#10 - Conditions for STATIC mode - Congested traffic</comment>
+			<result outcome="success" type="quality" timestamp="2024-12-14 00:58:26 -0500">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+	</queries>
+</nta>
